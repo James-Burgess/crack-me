@@ -5,6 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
 </head>
+
 <body>
   <div class="noise"></div>
   <div class="overlay"></div>
@@ -20,7 +21,6 @@
 
 
   <script>
-
       var source = "./ax";
       var audio = new Audio(); // use the constructor in JavaScript, just easier that way
       audio.addEventListener("load", function() {
@@ -33,10 +33,12 @@
     window.addEventListener('click', ()=> {audio.play()})
 
     function submitted() {
-      let url = "http://localhost:8080/locked?pass="+document.getElementById("password").value
+      let user = localStorage.getItem('user');
+      let pass = document.getElementById("password").value
+      let url = "http://localhost:8080/locked?pass="+pass+"&user="+user
       document.location = url;
   }
-  </script>
+</script>
 
 
 <style>

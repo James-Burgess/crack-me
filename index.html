@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="instructions">
-  <h1>Hey you</h1>
+  <h1 id="hey">Hey you</h1>
   <p>lets play a game, Enter your name and guess the password!</p>
   <p><span class="emoji">💨</span> First to guess, drinks on me</p>
   <p><span class="emoji">🧠</span> Least guesses, drinks on me</p>
@@ -224,7 +224,16 @@
   onload="initFingerprintJS()"
 ></script>
 
-  <script>
+<script>
+  let user = localStorage.getItem("user")
+
+  if (user) {
+    document.getElementById("username").value = user
+    document.getElementById("username").disabled = true
+    document.getElementById("password").placeholder = "another try?"
+    document.getElementById('hey').innerText = "Hey " + user
+  }
+
   let visitorId;
   function initFingerprintJS() {
     FingerprintJS.load().then(fp => {
@@ -239,7 +248,11 @@
   }
 
     function submitted() {
-      let url = "http://localhost:8080/locked?pass="+document.getElementById("password").value+"&user="+visitorId
+      let pass = document.getElementById("password").value
+      let user = document.getElementById("username").value
+      localStorage.setItem('user', user);
+
+      let url = "http://localhost:8080/locked?pass="+pass+"&hash="+visitorId+"&user="+user
       document.location = url;
   }
   // Inspired By

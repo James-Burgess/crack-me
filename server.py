@@ -1,31 +1,61 @@
-from bottle import auth_basic, request, route, error, static_file, run
-
-
+from bottle import auth_basic, request, route, error, static_file, run, abort
 from bottle import route, Response, run, HTTPError, request
+import re
 
-auth_enabled = True
-
-
-def custom_auth_basic(check, realm="private", text="Access denied"):
-    ''' Callback decorator to require HTTP auth (basic).
-        TODO: Add route(check_auth=...) parameter. '''
+def interceptor(check, realm="private", text="Access denied"):
     def decorator(func):
         def wrapper(*a, **ka):
             print('erere')
-            password = request.query['pass'] or None
-            print(password)
-            if password is None or not check(password):
-                err = static_file('fail.html', root='./')
-                # err.add_header('WWW-Authenticate', 'Basic realm="%s"' % realm)
-                return err
-            return func(*a, **ka)
 
+            ua = request.headers.get('User-Agent')
+            is_browser = re.search('chrome|safari|mozilla|edge|firefox', ua, re.IGNORECASE)
+
+            user = get_or_create_user(request.query.get('user'), request.query.get('hash'), is_browser)
+
+            if user is None:
+                if is_browser:
+                    return static_file('index.html', root='./')
+                return "please sign up online"
+
+            password = request.query.get('pass')
+            print(f"pass{password}")
+            if not password or not check(password, user):
+                if is_browser:
+                    return static_file('fail.html', root='./')
+                Response.status = 401
+                return "access denied"
+            return func(*a, **ka)
         return wrapper
 
     return decorator
 
 
-def check_credentials(pw):
+users = {}
+hashes = []
+def get_or_create_user(user, hash, browser):
+    global users
+    print(user, hash)
+    stored_user = users.get(user)
+
+    if hash and stored_user:
+        if stored_user.get("hash") != hash:
+            return None
+        return user
+    elif stored_user:
+        return user
+    elif not hash:
+        return None
+    elif hash in hashes:
+        return None
+    elif browser:
+        hashes.append(hash)
+        users[user] = {"hash": hash}
+        return user
+    else:
+        return None
+
+
+def check_credentials(pw, user):
     print(pw)
     username = "test"
     password = "test"
@@ -34,7 +64,7 @@ def check_credentials(pw):
 
 
 @route('/locked')
-@custom_auth_basic(check_credentials)
+@interceptor(check_credentials)
 def win():
     return static_file('win.html', root='./')
 
@@ -46,11 +76,5 @@ def root():
 def root():
     return static_file('ax.mp3', root='./')
 
-run(host='localhost', port=8080)
 
-# @route('/')
-# @auth_basic(is_authenticated_user)
-# def hello():
-#
-#
-# run(host='0.0.0.0', port=8080, debug=True)
+run(host='0.0.0.0', port=8080, debug=True)
