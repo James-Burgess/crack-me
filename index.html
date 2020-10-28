@@ -252,7 +252,7 @@
       let user = document.getElementById("username").value
       localStorage.setItem('user', user);
 
-      let url = "http://localhost:8080/locked?pass="+pass+"&hash="+visitorId+"&user="+user
+      let url = "http://localhost:8000/locked?pass="+pass+"&hash="+visitorId+"&user="+user
       document.location = url;
   }
   // Inspired By
