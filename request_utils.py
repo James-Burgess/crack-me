@@ -28,6 +28,6 @@ def interceptor(check, realm="private"):
                 return "access denied"
 
             print(f"found password {password}")
-            return func(*a, **ka)
+            return func(user, *a, **ka)
         return wrapper
     return decorator

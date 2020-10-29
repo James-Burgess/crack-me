@@ -45,7 +45,7 @@ def get_or_create_user(user, hash, browser, pswd):
     elif db.users.find_one({"hash": hash}):
         return None
     elif browser:
-        db.users.insert_one({"user": user, "hash": hash, "count": 0, "first_guess": pswd})
+        db.users.insert_one({"user": user, "hash": hash, "count": 0, "first_guess": pswd, "sign_up": datetime.now().strftime('%s')})
         return user
     else:
         return None
