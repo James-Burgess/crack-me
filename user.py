@@ -1,11 +1,15 @@
+import os
 from collections import OrderedDict
 from datetime import datetime
 
 from pymongo import MongoClient
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 client = MongoClient(
-    "mongodb+srv://<creds>@cluster0.qlnvp.mongodb.net/users?retryWrites=true&w=majority"
+    os.getenv("MONGO_DB_URL")
 )
 db = client.users
 

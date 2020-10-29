@@ -225,40 +225,32 @@
 ></script>
 
 <script>
-  let user = localStorage.getItem("user")
+let user = localStorage.getItem("user")
 
-  if (user) {
-    document.getElementById("username").value = user
-    document.getElementById("username").disabled = true
-    document.getElementById("password").placeholder = "another try?"
-    document.getElementById('hey').innerText = "Hey " + user
-  }
+if (user) {
+  document.getElementById("username").value = user
+  document.getElementById("username").disabled = true
+  document.getElementById("password").placeholder = "another try?"
+  document.getElementById('hey').innerText = "Hey " + user
+}
 
-  let visitorId;
-  function initFingerprintJS() {
-    FingerprintJS.load().then(fp => {
-      // The FingerprintJS agent is ready.
-      // Get a visitor identifier when you'd like to.
-      fp.get().then(result => {
-        // This is the visitor identifier:
-        visitorId = result.visitorId;
-        console.log(visitorId);
-      });
+let visitorId;
+function initFingerprintJS() {
+  FingerprintJS.load().then(fp => {
+    fp.get().then(result => {
+      visitorId = result.visitorId;
     });
-  }
+  });
+}
 
-    function submitted() {
-      let pass = document.getElementById("password").value
-      let user = document.getElementById("username").value
-      localStorage.setItem('user', user);
+function submitted() {
+  let pass = document.getElementById("password").value
+  let user = document.getElementById("username").value
+  localStorage.setItem('user', user);
 
-      let url = "http://localhost:8000/locked?pass="+pass+"&hash="+visitorId+"&user="+user
-      document.location = url;
-  }
-  // Inspired By
-// https://codepen.io/abeatrize/pen/LJqYey
-
-// Bongo Cat originally created by @StrayRogue and @DitzyFlama
+  let url = "/locked?pass="+pass+"&hash="+visitorId+"&user="+user
+  document.location = url;
+}
 
 const ID = "bongo-cat";
 const s = selector => `#${ID} ${selector}`;

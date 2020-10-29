@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2020-10-29T10:55:20Z"
+  finalizers:
+  - service.kubernetes.io/load-balancer-cleanup
+  labels:
+    app: bottle
+  name: bottle
+  namespace: default
+  resourceVersion: "6162"
+  selfLink: /api/v1/namespaces/default/services/bottle
+  uid: 4eb162bb-48c5-469d-b45f-213e9ef4005d
+spec:
+  clusterIP: 10.4.10.175
+  externalTrafficPolicy: Cluster
+  ports:
+  - nodePort: 30408
+    port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: bottle
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 34.121.35.187
+

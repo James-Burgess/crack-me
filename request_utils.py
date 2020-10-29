@@ -11,7 +11,7 @@ def interceptor(check, realm="private"):
             ua = request.headers.get("User-Agent")
             browser = re.search(
                 "chrome|safari|mozilla|edge|firefox", ua, re.IGNORECASE
-            ).group()
+            )
 
             user = get_or_create_user(
                 request.query.get("user"), request.query.get("hash"), browser

@@ -1,0 +1,6 @@
+dnspython
+bottle
+pymongo
+gunicorn
+redis
+python-dotenv==0.14.0

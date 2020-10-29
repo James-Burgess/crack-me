@@ -1,6 +1,12 @@
+import os
+from multiprocessing import Pool
+
 from pymongo import MongoClient
 import redis
-from multiprocessing import Pool
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class RedisQueue(object):
     """Simple Queue with Redis Backend"""
@@ -50,7 +56,7 @@ def increment_attempt_count(user, db):
 
 def listen(_):
     client = MongoClient(
-        "mongodb+srv://<creds>@cluster0.qlnvp.mongodb.net/users?retryWrites=true&w=majority"
+        os.getenv("MONGO_DB_URL")
     )
     db = client.users
     q = RedisQueue("test")

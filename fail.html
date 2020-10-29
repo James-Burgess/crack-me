@@ -35,7 +35,7 @@
     function submitted() {
       let user = localStorage.getItem('user');
       let pass = document.getElementById("password").value
-      let url = "http://localhost:8000/locked?pass="+pass+"&user="+user
+      let url = "/locked?pass="+pass+"&user="+user
       document.location = url;
   }
 </script>

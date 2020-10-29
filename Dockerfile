@@ -1,23 +1,8 @@
-# A super-simple "hello world" server that exposes port 8080
-#
-# VERSION               0.1.0
-FROM ubuntu
-
-# create user
-RUN groupadd web
-RUN useradd -d /home/bottle -m bottle
-
-# make sure sources are up to date
-RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
-RUN apt-get update -f
-
-
-# install pip and hello-world server requirements
-RUN apt-get install python-pip -y
-ADD server.py /home/bottle/server.py
-RUN pip install bottle redis
-
-# in case you'd prefer to use links, expose the port
-EXPOSE 8080
-ENTRYPOINT ["/usr/bin/python", "/home/bottle/server.py"]
-USER bottle
+FROM python:3.8-slim
+RUN mkdir /app
+WORKDIR /app
+ADD requirements.txt /app
+RUN pip3 install -r requirements.txt
+ADD . /app
+EXPOSE 5000
+ENTRYPOINT ["gunicorn", "--config", "gunicorn_config.py", "server:app"]

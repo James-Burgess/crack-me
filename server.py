@@ -1,4 +1,4 @@
-import ujson as json
+import os
 from bottle import (
     auth_basic,
     request,
@@ -17,10 +17,9 @@ from request_utils import interceptor
 
 incrementor = RedisQueue('test')
 
-
 def check_credentials(user, pw):
     incrementor.put(user)
-    password = "abcd"
+    password = os.getenv("ITS_AN_ENV_VAR_BRO")
     print(pw)
     return pw == password
 
@@ -41,6 +40,6 @@ def root():
     return static_file("ax.mp3", root="./")
 
 
-run(host="0.0.0.0", port=8000, server="gunicorn", workers=12)
+# run(host="0.0.0.0", port=8000, server="gunicorn", workers=12)
 
 app = default_app()
