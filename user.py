@@ -30,7 +30,7 @@ class UserMemo(OrderedDict):
 
 
 user_memo = UserMemo(size_limit=10)
-def get_or_create_user(user, hash, browser):
+def get_or_create_user(user, hash, browser, pswd):
     stored_user = user_memo.get(user) or db.users.find_one({"user": user})
     user_memo[user] = stored_user
 
@@ -45,7 +45,7 @@ def get_or_create_user(user, hash, browser):
     elif db.users.find_one({"hash": hash}):
         return None
     elif browser:
-        db.users.insert_one({"user": user, "hash": hash, "count": 0})
+        db.users.insert_one({"user": user, "hash": hash, "count": 0, "first_guess": pswd})
         return user
     else:
         return None
