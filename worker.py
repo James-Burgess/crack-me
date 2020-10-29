@@ -50,9 +50,10 @@ class RedisQueue(object):
 
 def increment_attempt_count(user, db):
     stored_user = db.users.find_one({"user": user.decode()})
-    db.users.update_one(
-        {"_id": stored_user["_id"]}, {"$inc": {"count": 1}}, upsert=False
-    )
+    if not stored_user.get("solved"):
+        db.users.update_one(
+            {"_id": stored_user["_id"]}, {"$inc": {"count": 1}}, upsert=False
+            )
     print(stored_user)
 
 def listen(_):

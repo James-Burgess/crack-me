@@ -24,7 +24,6 @@ incrementor = RedisQueue('test')
 def check_credentials(user, pw):
     incrementor.put(user)
     password = os.getenv("ITS_AN_ENV_VAR_BRO")
-    print(pw)
     return pw == password
 
 
@@ -34,20 +33,22 @@ def check_credentials(user, pw):
 def win(user):
     user = db.users.find_one({"user": user})
     print(user)
-    solve_time = datetime.now().strftime('%s')
+
     if not user.get("solved"):
+        solve_time = datetime.now().strftime('%s')
         db.users.update_one(
             {"_id": user["_id"]}, {"$set": {"solved": True, "solve_time": solve_time}}, upsert=False
         )
         user = db.users.find_one({"user": user})
-    sign_up = user.get("sign_up")
-    duration = int(user.get(solve_time, 0)) - int(sign_up or 0) * 60 * 60
-    pos = db.users.count_documents(({"count": { "$lte" : user.get('count')}, "solved": True})) + 1
+
+    sign_up = user.get('sign_up')
+    duration = (int(user.get('solve_time')) - int(sign_up)) / 60 / 60
+    pos = db.users.count_documents(({"count": { "$lt" : user.get('count')}, "solved": True})) + 1
     return {
         "sign_up": datetime.fromtimestamp(int(sign_up or 0)),
         "count": user.get('count'),
-        "duration": duration,
-        "postion": pos,
+        "duration": str(duration)[:4],
+        "postion": pos + 1, # cause fuck you im always the winner
         "total_users":  db.command("collstats", "users").get('count'),
         "total_winners": db.users.count_documents(({"solved": True})) + 1,
     }
@@ -68,5 +69,5 @@ def root():
     return static_file("wn.mp3", root="./")
 
 
-run(host="0.0.0.0", port=8000, server="gunicorn", workers=2)
+# run(host="0.0.0.0", port=8000, server="gunicorn", workers=2)
 app = default_app()
